@@ -1,0 +1,61 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jun 02 10:11:38 2017
+
+@author: Administrator
+"""
+
+import urllib
+import json
+from pandas import Series,DataFrame,concat,read_csv
+import time
+import numpy as np
+from coordTransform_utils import bd09_to_wgs84
+def way_query(origin,destination,city):#point of interest
+    apiStem = 'http://api.map.baidu.com/direction/v1/transit?'  #create a dict and constants for the goecoder
+    params = {}
+    params['mode']='walking'
+    params['origin'] = '%s,%s' % (origin[1],origin[0])#先维度后经度
+    params['destination']='%s,%s' % (destination[1],destination[0])
+    params['output'] = 'json'#JSON return type
+    params['coord_type'] = 'wgs84'#wgs84ll即GPS经纬度
+    
+    params['ak'] = 'zElWdO4vivpBsdGYjqtxeO2lltaOx9of'
+    params['origin_region'] = city
+    params['destination_region'] = city
+    print params
+    url_params = urllib.urlencode(params)
+    baiduApi = apiStem + url_params      #print url_params
+    print 'API',baiduApi
+    return urllib.urlopen(baiduApi)  
+   
+   
+
+if __name__=='__main__': 
+    #116.469679,39.980938  116.473295,39.977542
+    '''
+    top_cluster=read_csv(u'2015年企业聚类中心.csv')
+    bottom_cluster=read_csv(u"网格18聚类中心.csv")
+    luxian_guihua_df=DataFrame(index=bottom_cluster.index,columns=range(len(top_cluster)))
+    luxian_changdu_df=DataFrame(index=bottom_cluster.index,columns=range(len(top_cluster)))
+    for i in range(luxian_guihua_df.shape[0]):
+        for j in range(luxian_guihua_df.shape[1]):
+            output=way_query(bottom_cluster.iloc[i],top_cluster.iloc[j],'张家港').read()
+            time.sleep(1)
+            cao1=json.loads(output)
+            cao2=cao1['result']
+            cao3=cao2['routes'][0]['steps']
+            path_all=[]
+            path_length=0
+            for item in cao3:
+               for item2 in item['path'].split(';'):
+                   path_all.append(bd09_to_wgs84(eval(item2)[0],eval(item2)[1])) 
+               path_length+=item['distance']
+            luxian_guihua_df.iloc[i,j]=path_all
+            luxian_changdu_df.iloc[i,j]=path_length
+    '''
+    for i in range(luxian_guihua_df.shape[0]):
+        for j in range(luxian_guihua_df.shape[1]):
+            np.savetxt(u'网格中心'+str(i)+u'第'+str(luxian_chuangdu_df.rank(axis=1).iloc[i,j])+u'短路径.csv',np.array(luxian_guihua_df.iloc[i,j]),fmt='%.7f',delimiter=',')
+      
+    
